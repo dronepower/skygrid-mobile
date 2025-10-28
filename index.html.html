@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Operations Center Module - SkyGrid | DronePower</title>
+    <style>
+        /* CSS Variables - DronePower Brand Identity */
+        :root {
+            --primary-green: #8bc34a; /* Main Green from Logo */
+            --dark-gray: #4a4a4a;     /* Dark Gray from Logo */
+            --bg-dark: #212121;       /* Main Background */
+            --card-bg: #2c2c2c;       /* Card Background */
+            --border-color: #3e3e3e;  /* Borders and Separators */
+            --heading-color: #f5f5f5; /* Main Headings */
+            --text-color: #bdbdbd;    /* Body Text */
+            --text-muted: #757575;
+            
+            --font-h1: 700 2.5rem/1.2 'Segoe UI', system-ui, sans-serif;
+            --font-h2: 600 2rem/1.3 'Segoe UI', system-ui, sans-serif;
+            --font-h3: 500 1.5rem/1.4 'Segoe UI', system-ui, sans-serif;
+            --font-body: 400 1.1rem/1.7 'Segoe UI', system-ui, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        /* General Reset & Body Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font: var(--font-body);
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+        }
+
+        /* Main Layout Containers */
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+        }
+
+        main {
+            padding: 2.5rem;
+        }
+        
+        section {
+            padding-top: 5rem;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Typography Hierarchy */
+        h1, h2, h3 {
+            color: var(--heading-color);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        h1 { font: var(--font-h1); }
+        h2 { font: var(--font-h2); }
+        h3 { font: var(--font-h3); }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* --- NAVIGATION --- */
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-logo {
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu li a:hover {
+            background-color: var(--dark-gray);
+            color: var(--heading-color);
+        }
+        
+        .nav-menu li a.active {
+            background-color: var(--primary-green);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* --- VISUAL COMPONENTS --- */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(139, 195, 74, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        ul.styled-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.styled-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        ul.styled-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--primary-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 1.5em;
+            height: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.75rem;
+            stroke: var(--primary-green);
+        }
+        
+        h4 .icon {
+            stroke: var(--heading-color);
+        }
+
+        .highlight {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* --- REFINED TABLE STYLING (SECTION 3.3) --- */
+        .table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 2rem 2rem 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1.2rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table th {
+            color: var(--heading-color);
+            font-weight: 600;
+        }
+
+        .comparison-table td:first-child { color: var(--heading-color); }
+        .comparison-table td:nth-child(2) { color: var(--text-muted); }
+        .comparison-table td:nth-child(3) { color: var(--primary-green); font-weight: 600; }
+
+        /* --- REFINED BENEFITS LAYOUT --- */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem 2.5rem;
+            padding-top: 1rem;
+        }
+
+        .benefit-item strong {
+            display: block;
+            color: var(--heading-color);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 240px 1fr;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                height: auto;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+        
+        @media (max-width: 768px) {
+             main { padding: 1.5rem; }
+             section { padding-top: 4rem; }
+             h1 { font-size: 2rem; }
+             h2 { font-size: 1.75rem; }
+             h3 { font-size: 1.3rem; }
+             .comparison-table { display: block; overflow-x: auto; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                 <img src="https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img/https://dronepower.com.br/wp-content/uploads/elementor/thumbs/dronepowehorizontal-qy99xu0mgtamlfi3z7fil5l35ydloc4s5a2nj69zwg.png" alt="DronePower Logo">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#summary" class="active">1. Executive Summary</a></li>
+                <li><a href="#context">2. Context & Opportunities</a></li>
+                <li><a href="#concept">3. Technical Concept</a></li>
+                <li><a href="#usecase1">4. Use Case: Thermal Inspection</a></li>
+                <li><a href="#usecase2">5. Use Case: Vegetation Mgmt.</a></li>
+                <li><a href="#compliance">6. Regulatory Compliance</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <header>
+                <h1>MOBILE OPERATIONS CENTER MODULE - SKYGRID</h1>
+                <p style="font-size: 1.3rem; color: var(--heading-color); margin-bottom: 2rem;">Autonomous Operations for Vegetation Management and Thermal Inspection</p>
+            </header>
+
+            <section id="summary">
+                <h2>1. Executive Summary</h2>
+                <div class="card">
+                    <h3>Strategic Opportunity</h3>
+                    <p>At the request of international strategic partners, the Mobile Operations Center Module explores advanced technologies such as <strong style="color:var(--primary-green)">Beyond Visual Line of Sight (BVLOS)</strong> operations, <strong style="color:var(--primary-green)">point cloud</strong> generation, and <strong style="color:var(--primary-green)">full mission automation</strong>. These capabilities significantly contribute to increasing operational efficiency, especially in scenarios with <span class="highlight">difficult access</span> and a <span class="highlight">scarcity of specialized operators</span>.</p>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Proposed Solution</h3>
+                        <p>A mobile operations center consisting of a 4x4 vehicle adapted with an onboard <strong style="color:var(--heading-color)">DJI Dock 3</strong>. The system can execute fully autonomous missions within a radius of up to <strong style="font-family: var(--font-mono); color: var(--primary-green);">2km</strong>, eliminating the need for local technical experts for both drone operation and preliminary data analysis.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Operational Advantage</h3>
+                        <ul class="styled-list">
+                            <li>Access to remote areas without the need for a local specialized team.</li>
+                            <li>Automated operations that significantly increase productivity.</li>
+                            <li>Processing and analysis can be performed remotely.</li>
+                            <li>Reduced dependence on multiple professionals in the field.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="card">
+                    <img src="https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/dji_dock1.jpg" alt="DJI Dock in operation on a vehicle" style="width:100%; border-radius: 8px; display: block;">
+                </div>
+            </section>
+
+            <section id="context">
+                <h2>2. Context & Identified Opportunities</h2>
+                <div class="grid-2">
+                    <article class="card">
+                        <h3>2.1 Technological Direction</h3>
+                        <p>We investigated advanced technologies focusing on:</p>
+                        <ul class="styled-list">
+                           <li>Autonomous operations: missions without a dedicated pilot in the field.</li>
+                           <li>BVLOS operations: capability to operate beyond the direct line of sight.</li>
+                           <li>Point cloud generation: complete 3D digitalization.</li>
+                           <li>Automated analysis: data processing without local expert dependency.</li>
+                        </ul>
+                        <p>These technologies directly address two universal challenges in the electrical sector:</p>
+                        <ol style="padding-left: 2rem;">
+                            <li><strong class="highlight">Difficulty of access</strong> to infrastructure in remote areas.</li>
+                            <li><strong class="highlight">Scarcity of technical specialists</strong> for field operation and analysis.</li>
+                        </ol>
+                    </article>
+                    <article class="card">
+                        <h3>2.2 Operational Improvement Opportunities</h3>
+                        <h4>Thermal Inspection of Substations:</h4>
+                         <ul style="list-style: none; padding-left: 1rem; margin-bottom: 1.5rem;">
+                            <li><strong>Challenge:</strong> Limited coverage in unattended substations.</li>
+                            <li><strong>Opportunity:</strong> Complete and regular thermal mapping.</li>
+                            <li><strong>Benefit:</strong> Early detection of anomalies without a local specialist.</li>
+                        </ul>
+                        <h4>Vegetation Management in Spans:</h4>
+                        <ul style="list-style: none; padding-left: 1rem;">
+                            <li><strong>Challenge:</strong> Systematic monitoring of vegetation growth.</li>
+                            <li><strong>Opportunity:</strong> Automate identification of potential risks.</li>
+                            <li><strong>Benefit:</strong> Predictive vs. reactive maintenance.</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section id="concept">
+                <h2>3. Technical Concept</h2>
+                
+                <div class="card">
+                    <h3>3.1 System Overview and Operational Principle</h3>
+                    <p>The Mobile Operations Center enables the digitalization of infrastructure in hard-to-reach areas, removing barriers of physical access and local technical expertise. Complex operations are performed automatically from a mobile point with connectivity.</p>
+                    <ol style="padding-left: 2rem;">
+                        <li>Vehicle reaches the closest possible point via road.</li>
+                        <li>Automated system performs missions in surrounding inaccessible areas (2km radius).</li>
+                        <li>Data is processed and analyzed remotely.</li>
+                        <li>Eliminates the need for a specialized team in the field.</li>
+                    </ol>
+                </div>
+                
+                <h3>3.2 Main Components</h3>
+                <div class="grid-3">
+                    <div class="card">
+                        <h4>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16.24V22a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5.76"></path><path d="M14 7.52c0 2.22-1.21 4.16-3 5.19"></path><path d="M2 13.88c0 3.12 3.14 5.62 7 5.62h0c3.86 0 7-2.5 7-5.62V9.11"></path><path d="M14 9.11V4.28a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v13.44a2 2 0 0 0 2 2h0"></path><path d="M4 11.41V4.28a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2.83"></path><path d="M18 10h.01"></path><path d="M6 6h.01"></path></svg>
+                            Mobile Platform
+                        </h4>
+                        <p>4x4 vehicle (pickup type) with a protected compartment, autonomous power system, and redundant satellite/cellular connectivity.</p>
+                    </div>
+                    <div class="card">
+                        <h4>
+                           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18.5A2.5 2.5 0 0 1 9.5 16v-2.28a2.5 2.5 0 0 1 5 0V16a2.5 2.5 0 0 1-2.5 2.5Z"></path><path d="M12 13.72V10"></path><path d="M15 12.22V10"></path><path d="M9 12.22V10"></path><path d="m17 16-1.5-1.5"></path><path d="m7 16 1.5-1.5"></path><path d="M12 6.5A2.5 2.5 0 0 1 9.5 4V2a2.5 2.5 0 0 1 5 0v2a2.5 2.5 0 0 1-2.5 2.5Z"></path></svg>
+                            Autonomous Flight System
+                        </h4>
+                        <p>DJI Dock 3 with a compatible drone, allowing fully automated operation with a 2km range for multiple daily missions.</p>
+                    </div>
+                    <div class="card">
+                         <h4>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z"></path><path d="M12 3a5 5 0 0 0-5 5v1.2A5.02 5.02 0 0 0 8 13h8a5.02 5.02 0 0 0 1-3.8V8a5 5 0 0 0-5-5Z"></path><path d="m8 14 1 3"></path><path d="m16 14-1 3"></path></svg>
+                            Connectivity and Processing
+                        </h4>
+                        <p>Satellite terminal (Starlink type), onboard processing capability, selective data transmission, and remote analysis by specialists.</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>3.3 Operational Advantage</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Traditional Operation</th>
+                                <th>Mobile Operations Center</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Access</strong></td>
+                                <td>Requires arrival at the exact point</td>
+                                <td>Operates from any point with a road</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Expertise</strong></td>
+                                <td>Specialized pilot required</td>
+                                <td>100% automated operation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Analysis</strong></td>
+                                <td>Local technical specialist</td>
+                                <td>Centralized remote analysis</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Coverage</strong></td>
+                                <td>Limited by physical access</td>
+                                <td>2km radius from the vehicle</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="usecase1">
+                <h2>4. Use Case 1: Thermal Inspection of Substations</h2>
+                <div class="card">
+                    <h3>4.1 Context and Opportunity</h3>
+                    <p>Unattended or remote substations present a challenge for regular inspection. Automated aerial thermography allows for early identification of thermal anomalies that may indicate developing problems, without requiring the displacement of technical specialists.</p>
+                </div>
+
+                <div class="grid-2">
+                     <article class="card">
+                        <h3>4.2 Automated Approach</h3>
+                        <p><strong>Operation via Mobile Center:</strong></p>
+                        <ul class="styled-list">
+                            <li>Vehicle is positioned near the substation.</li>
+                            <li>Dock executes a pre-programmed thermal mapping mission.</li>
+                            <li>Systematic coverage of all equipment.</li>
+                            <li>Thermal data is transmitted for remote analysis.</li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>4.3 Processing and Analysis</h3>
+                        <p><strong>Capabilities:</strong></p>
+                        <ul class="styled-list">
+                           <li>Capture of high-resolution thermal images.</li>
+                           <li>Identification of abnormal temperature gradients.</li>
+                           <li>Comparison with previous inspections (trending).</li>
+                           <li>Support for predictive maintenance.</li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div class="card">
+                    <h3>4.4 Expected Benefits</h3>
+                    <div class="benefits-grid">
+                        <div class="benefit-item"><strong>Increased productivity</strong> in thermal inspections.</div>
+                        <div class="benefit-item"><strong>Coverage of unattended substations</strong> on a regular basis.</div>
+                        <div class="benefit-item"><strong>Less dependence</strong> on local technical specialists.</div>
+                        <div class="benefit-item"><strong>Early detection</strong> of potential problems.</div>
+                        <div class="benefit-item"><strong>Database</strong> for predictive analysis.</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="usecase2">
+                <h2>5. Use Case 2: Vegetation Management in Spans</h2>
+                <div class="card">
+                    <h3>5.1 Operational Context</h3>
+                    <p>Vegetation management in transmission line spans represents a significant challenge, especially in hard-to-reach areas where regular monitoring is complex and costly. Early detection of potential interferences allows for proper planning of interventions, avoiding emergency situations.</p>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>5.2 Technical Solution - Automated Photogrammetry</h3>
+                        <p><strong>Approach:</strong></p>
+                        <ul class="styled-list">
+                            <li>Automated capture of images with high overlap.</li>
+                            <li>Generation of a point cloud through photogrammetry.</li>
+                            <li>Analysis of the distance between vegetation and cables.</li>
+                            <li>Identification of areas requiring attention.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Advantage of the Mobile System</h3>
+                        <ul class="styled-list">
+                           <li>Access to remote spans without trails or roads.</li>
+                           <li>Automated operation eliminates the need for a specialized pilot.</li>
+                           <li>Processing can be performed remotely.</li>
+                           <li>Georeferenced digital documentation of each span.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>5.3 Operational Benefits</h3>
+                        <ul class="styled-list">
+                            <li>Increased productivity through automated operations.</li>
+                            <li>Coverage of areas inaccessible by traditional methods.</li>
+                            <li>Predictive planning based on objective data.</li>
+                            <li>Reduced dependence on specialized field teams.</li>
+                            <li>Digital history for trend analysis.</li>
+                        </ul>
+                    </div>
+                     <div class="card">
+                        <h3>5.4 Deliverables</h3>
+                        <p><strong>Expected Products:</strong></p>
+                        <ul class="styled-list">
+                            <li>3D model of the inspected spans.</li>
+                            <li>Vegetation-infrastructure proximity mapping.</li>
+                            <li>Reports prioritized by criticality.</li>
+                            <li>Georeferenced database for management.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="compliance">
+                <h2>6. Regulatory Compliance and BVLOS</h2>
+                
+                <div class="card">
+                    <h3>6.1 Brazilian Regulatory Context</h3>
+                    <p>BVLOS (Beyond Visual Line of Sight) operation in Brazil is regulated by ANAC through <strong>RBAC-E No. 94</strong>. The Mobile Operations Center operates within a framework that seeks regulatory compatibility while enabling advanced operations.</p>
+                </div>
+                
+                <h3>6.2 Proven Dronpower History with ANAC</h3>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>BVLOS Authorization (2023)</h4>
+                        <p>Obtained authorization for substation inspection with BVLOS, setting a precedent for autonomous operations within a controlled perimeter of electrical infrastructure.</p>
+                    </div>
+                     <div class="card">
+                        <h4>Specialized Authorization (2021)</h4>
+                        <p>Approval for operation with an incendiary device on a transmission line, demonstrating the capability to navigate complex regulatory processes.</p>
+                    </div>
+                </div>
+
+                 <div class="card">
+                    <h3>6.3 Compliance Strategy for the Module</h3>
+                     <div class="grid-2">
+                         <div>
+                            <h4>Operational Approach</h4>
+                            <ul class="styled-list">
+                               <li>Operations in rural and controlled areas.</li>
+                               <li>Conservative operational radius of 2km.</li>
+                               <li>Established safety procedures.</li>
+                               <li>Geo-fence and automatic return-to-home.</li>
+                            </ul>
+                         </div>
+                         <div>
+                             <h4>Risk Mitigation</h4>
+                             <ul class="styled-list">
+                                <li>Operator present on-site (in the vehicle).</li>
+                                <li>Constant communication with air traffic control where applicable.</li>
+                                <li>Specific insurance for operations.</li>
+                                <li>Defined emergency protocols.</li>
+                             </ul>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Simple script for active navigation link highlighting on scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-menu a');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(a => {
+                        a.classList.remove('active');
+                        if (`#${entry.target.id}` === a.getAttribute('href')) {
+                            a.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: '-30% 0px -70% 0px' });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+
+</body>
+</html>
